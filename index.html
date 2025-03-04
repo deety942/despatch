@@ -15,14 +15,12 @@
       padding: 0;
       font-size: 16px;
     }
-
     .container {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
       margin: 20px;
     }
-
     .calculator {
       margin: 20px;
       padding: 20px;
@@ -33,7 +31,6 @@
       box-shadow: 0 4px 8px rgba(0, 255, 0, 0.2);
       animation: flicker 1s infinite alternate;
     }
-
     h2 {
       color: #00ff00;
       text-transform: uppercase;
@@ -41,7 +38,6 @@
       margin-bottom: 20px;
       animation: glitch 1.5s infinite;
     }
-
     @keyframes flicker {
       0% {
         opacity: 1;
@@ -53,7 +49,6 @@
         opacity: 1;
       }
     }
-
     @keyframes glitch {
       0% {
         text-shadow: 2px 2px 0 #ff0000, -2px -2px 0 #00ff00;
@@ -80,14 +75,12 @@
         transform: translate(-2px, 2px);
       }
     }
-
     label {
       display: block;
       margin-top: 10px;
       font-weight: bold;
       color: #00ff00;
     }
-
     input[type="number"] {
       width: 80%;
       padding: 8px;
@@ -97,7 +90,6 @@
       color: #00ff00;
       border-radius: 4px;
     }
-
     button {
       background-color: #00ff00;
       color: #000;
@@ -108,13 +100,11 @@
       font-size: 18px;
       transition: 0.2s;
     }
-
     button:hover {
       background-color: #ff0000;
       color: #00ff00;
       border: 1px solid #00ff00;
     }
-
     #result {
       margin-top: 20px;
       padding: 10px;
@@ -123,7 +113,6 @@
       border-radius: 4px;
       text-align: left;
     }
-
     .barcode-section {
       width: 100%;
       max-width: 650px;
@@ -135,20 +124,20 @@
       box-shadow: 0 4px 8px rgba(0, 255, 0, 0.2);
       text-align: left;
     }
-
     .barcode-container {
       display: inline-block;
       margin: 10px;
     }
-
     #barcode-area {
       margin-bottom: 10px;
     }
-
+    .worklog-section {
+      text-align: center;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
-
   <div class="container">
     <div class="calculator">
       <h2>Trolley Calculator</h2>
@@ -161,32 +150,29 @@
       <button onclick="calculateTrolleys()">Calculate</button>
       <div id="result"></div>
     </div>
-
     <div class="calculator">
       <h2>Cream Calculator (Coming Soon!)</h2>
       <p>This section will help you calculate cream quantities. Stay tuned!</p>
     </div>
   </div>
-
   <div class="barcode-section">
     <h2>Cheat Trailer</h2>
     <div id="barcode-area"></div>
     <button onclick="showNextBarcode()">Next Barcode</button>
   </div>
-
+  <div class="worklog-section">
+    <button onclick="openWorkLog()">Work Log</button>
+  </div>
   <script>
     function generateRandomNumbers(length) {
       let result = '';
       for (let i = 0; i < length; i++) {
-        result += Math.floor(Math.random() * 10); // Generates a random digit (0-9)
+        result += Math.floor(Math.random() * 10);
       }
       return result;
     }
-
     let barcodes = [];
     let currentBarcodeIndex = 0;
-
-    // Generate the 106 barcodes and store them in an array
     function generateBarcodes() {
       for (let i = 0; i < 106; i++) {
         const randomNumber = generateRandomNumbers(8);
@@ -195,18 +181,13 @@
       }
       displayBarcode();
     }
-
-    // Display the barcode at the current index
     function displayBarcode() {
       const barcodeArea = document.getElementById('barcode-area');
-      barcodeArea.innerHTML = ''; // Clear the previous barcode
-
+      barcodeArea.innerHTML = '';
       const barcodeDiv = document.createElement('div');
       barcodeDiv.classList.add('barcode-container');
-
       const barcodeCanvas = document.createElement('canvas');
       barcodeDiv.appendChild(barcodeCanvas);
-
       JsBarcode(barcodeCanvas, barcodes[currentBarcodeIndex], {
         format: "CODE128",
         displayValue: true,
@@ -214,48 +195,33 @@
         height: 50,
         margin: 10,
       });
-
       barcodeArea.appendChild(barcodeDiv);
     }
-
-    // Show the next barcode when the button is clicked
     function showNextBarcode() {
       if (currentBarcodeIndex < barcodes.length - 1) {
         currentBarcodeIndex++;
       } else {
-        currentBarcodeIndex = 0; // Loop back to the first barcode
+        currentBarcodeIndex =0;
       }
       displayBarcode();
     }
-
     window.onload = generateBarcodes;
-
-    // Function to calculate trolleys
     function calculateTrolleys() {
-      // Get input values
       var twoPintInput = document.getElementById("twoPintInput").value;
       var fourPintInput = document.getElementById("fourPintInput").value;
       var sixPintInput = document.getElementById("sixPintInput").value;
-
-      // Convert inputs to integers
       twoPintInput = parseInt(twoPintInput);
       fourPintInput = parseInt(fourPintInput);
       sixPintInput = parseInt(sixPintInput);
-
-      // Perform calculations
       var twoPintTrolleys = Math.floor(twoPintInput / 140);
       var twoPintLayers = Math.floor((twoPintInput % 140) / 35);
       var twoPintEaches = (twoPintInput % 140) % 35;
-
       var fourPintTrolleys = Math.floor(fourPintInput / 80);
       var fourPintLayers = Math.floor((fourPintInput % 80) / 20);
       var fourPintEaches = (fourPintInput % 80) % 20;
-
       var sixPintTrolleys = Math.floor(sixPintInput / 48);
       var sixPintLayers = Math.floor((sixPintInput % 48) / 12);
       var sixPintEaches = (sixPintInput % 48) % 12;
-
-      // Display results
       document.getElementById("result").innerHTML =
         "<strong>2-Pint Trolleys:</strong> " + twoPintTrolleys + "<br>" +
         "<strong>2-Pint Layers:</strong> " + twoPintLayers + "<br>" +
@@ -267,7 +233,9 @@
         "<strong>6-Pint Layers:</strong> " + sixPintLayers + "<br>" +
         "<strong>6-Pint Eaches:</strong> " + sixPintEaches;
     }
+    function openWorkLog() {
+      window.open("https://deety942.github.io/logger/", "_blank");
+    }
   </script>
-
 </body>
 </html>
