@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dispatch Worker's Helper</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background-color: #f0f0f0;
+    }
+    .container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .calculator {
+      margin: 20px 10px;
+      padding: 20px;
+      border: 2px solid #d32f2f;
+      width: 300px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+    input[type="number"] {
+      width: 80%;
+      padding: 8px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      background-color: #d32f2f;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #result {
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #ffebee;
+      border: 1px solid #e57373;
+      border-radius: 4px;
+      text-align: left;
+    }
+    h2 {
+      color: #d32f2f;
+    }
+    .barcode-section {
+      width: 100%;
+      max-width: 650px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 2px solid #d32f2f;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      text-align: left;
+    }
+    .barcode-container {
+      display: inline-block;
+      margin: 10px;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+  <script>
+    function generateRandomNumbers(length) {
+      let result = '';
+      for (let i = 0; i < length; i++) {
+        result += Math.floor(Math.random() * 10); // Generates a random digit (0-9)
+      }
+      return result;
+    }
+
+    let barcodes = [];
+    let currentBarcodeIndex = 0;
+
+    // Generate the 106 barcodes and store them in an array
+    function generateBarcodes() {
+      for (let i = 0; i < 106; i++) {
+        const randomNumber = generateRandomNumbers(8);
+        const barcodeValue = "DC" + randomNumber;
+        barcodes.push(barcodeValue);
+      }
+      displayBarcode();
+    }
+
+    // Display the barcode at the current index
+    function displayBarcode() {
+      const barcodeArea = document.getElementById('barcode-area');
+      barcodeArea.innerHTML = ''; // Clear the previous barcode
+
+      const barcodeDiv = document.createElement('div');
+      barcodeDiv.classList.add('barcode-container');
+
+      const barcodeCanvas = document.createElement('canvas');
+      barcodeDiv.appendChild(barcodeCanvas);
+
+      JsBarcode(barcodeCanvas, barcodes[currentBarcodeIndex], {
+        format: "CODE128",
+        displayValue: true,
+        width: 2,
+        height: 50,
+        margin: 10,
+      });
+
+      barcodeArea.appendChild(barcodeDiv);
+    }
+
+    // Show the next barcode when the button is clicked
+    function showNextBarcode() {
+      if (currentBarcodeIndex < barcodes.length - 1) {
+        currentBarcodeIndex++;
+      } else {
+        currentBarcodeIndex = 0; // Loop back to the first barcode
+      }
+      displayBarcode();
+    }
+
+    window.onload = generateBarcodes;
+
+    // Function to calculate trolleys
+    function calculateTrolleys() {
+      // Get input values
+      var twoPintInput = document.getElementById("twoPintInput").value;
+      var fourPintInput = document.getElementById("fourPintInput").value;
+      var sixPintInput = document.getElementById("sixPintInput").value;
+
+      // Convert inputs to integers
+      twoPintInput = parseInt(twoPintInput);
+      fourPintInput = parseInt(fourPintInput);
+      sixPintInput = parseInt(sixPintInput);
+
+      // Perform calculations
+      var twoPintTrolleys = Math.floor(twoPintInput / 140);
+      var twoPintLayers = Math.floor((twoPintInput % 140) / 35);
+      var twoPintEaches = (twoPintInput % 140) % 35;
+
+      var fourPintTrolleys = Math.floor(fourPintInput / 80);
+      var fourPintLayers = Math.floor((fourPintInput % 80) / 20);
+      var fourPintEaches = (fourPintInput % 80) % 20;
+
+      var sixPintTrolleys = Math.floor(sixPintInput / 48);
+      var sixPintLayers = Math.floor((sixPintInput % 48) / 12);
+      var sixPintEaches = (sixPintInput % 48) % 12;
+
+      // Display results
+      document.getElementById("result").innerHTML =
+        "<strong>2-Pint Trolleys:</strong> " + twoPintTrolleys + "<br>" +
+        "<strong>2-Pint Layers:</strong> " + twoPintLayers + "<br>" +
+        "<strong>2-Pint Eaches:</strong> " + twoPintEaches + "<br><br>" +
+        "<strong>4-Pint Trolleys:</strong> " + fourPintTrolleys + "<br>" +
+        "<strong>4-Pint Layers:</strong> " + fourPintLayers + "<br>" +
+        "<strong>4-Pint Eaches:</strong> " + fourPintEaches + "<br><br>" +
+        "<strong>6-Pint Trolleys:</strong> " + sixPintTrolleys + "<br>" +
+        "<strong>6-Pint Layers:</strong> " + sixPintLayers + "<br>" +
+        "<strong>6-Pint Eaches:</strong> " + sixPintEaches;
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <div class="calculator">
+      <h2>Trolley Calculator</h2>
+      <label for="twoPintInput">Enter 2-Pint Bottles:</label>
+      <input type="number" id="twoPintInput"><br>
+      <label for="fourPintInput">Enter 4-Pint Bottles:</label>
+      <input type="number" id="fourPintInput"><br>
+      <label for="sixPintInput">Enter 6-Pint Bottles:</label>
+      <input type="number" id="sixPintInput"><br>
+      <button onclick="calculateTrolleys()">Calculate</button>
+      <div id="result"></div>
+    </div>
+
+    <div class="calculator">
+      <h2>Cream Calculator (Coming Soon!)</h2>
+      <p>This section will help you calculate cream quantities. Stay tuned!</p>
+    </div>
+  </div>
+
+  <div class="barcode-section">
+    <h2>Cheat Trailer</h2>
+    <div id="barcode-area"></div>
+    <button onclick="showNextBarcode()">Next Barcode</button>
+  </div>
+</body>
+</html>
