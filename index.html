@@ -1,76 +1,179 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dispatch Worker's Helper</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
   <style>
     body {
-      font-family: sans-serif;
+      font-family: 'Courier New', monospace;
+      background-color: #000;
+      color: #00ff00;
       text-align: center;
-      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      font-size: 16px;
     }
+
     .container {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
+      margin: 20px;
     }
+
     .calculator {
-      margin: 20px 10px;
+      margin: 20px;
       padding: 20px;
-      border: 2px solid #d32f2f;
+      border: 2px solid #00ff00;
       width: 300px;
-      background-color: white;
+      background-color: #111;
       border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 8px rgba(0, 255, 0, 0.2);
+      animation: flicker 1s infinite alternate;
     }
+
+    h2 {
+      color: #00ff00;
+      text-transform: uppercase;
+      font-size: 24px;
+      margin-bottom: 20px;
+      animation: glitch 1.5s infinite;
+    }
+
+    @keyframes flicker {
+      0% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes glitch {
+      0% {
+        text-shadow: 2px 2px 0 #ff0000, -2px -2px 0 #00ff00;
+        transform: translate(0);
+      }
+      20% {
+        text-shadow: -2px -2px 0 #ff0000, 2px 2px 0 #00ff00;
+        transform: translate(-2px, 2px);
+      }
+      40% {
+        text-shadow: 2px 2px 0 #ff0000, -2px -2px 0 #00ff00;
+        transform: translate(2px, -2px);
+      }
+      60% {
+        text-shadow: -2px -2px 0 #ff0000, 2px 2px 0 #00ff00;
+        transform: translate(-2px, 2px);
+      }
+      80% {
+        text-shadow: 2px 2px 0 #ff0000, -2px -2px 0 #00ff00;
+        transform: translate(2px, -2px);
+      }
+      100% {
+        text-shadow: -2px -2px 0 #ff0000, 2px 2px 0 #00ff00;
+        transform: translate(-2px, 2px);
+      }
+    }
+
     label {
       display: block;
       margin-top: 10px;
       font-weight: bold;
-      color: #333;
+      color: #00ff00;
     }
+
     input[type="number"] {
       width: 80%;
       padding: 8px;
       margin: 5px 0;
-      border: 1px solid #ccc;
+      border: 1px solid #00ff00;
+      background-color: #222;
+      color: #00ff00;
       border-radius: 4px;
     }
+
     button {
-      background-color: #d32f2f;
-      color: white;
+      background-color: #00ff00;
+      color: #000;
       padding: 10px 15px;
       border: none;
       border-radius: 4px;
       cursor: pointer;
+      font-size: 18px;
+      transition: 0.2s;
     }
+
+    button:hover {
+      background-color: #ff0000;
+      color: #00ff00;
+      border: 1px solid #00ff00;
+    }
+
     #result {
       margin-top: 20px;
       padding: 10px;
-      background-color: #ffebee;
-      border: 1px solid #e57373;
+      background-color: #222;
+      border: 1px solid #00ff00;
       border-radius: 4px;
       text-align: left;
     }
-    h2 {
-      color: #d32f2f;
-    }
+
     .barcode-section {
       width: 100%;
       max-width: 650px;
       margin: 20px auto;
       padding: 20px;
-      border: 2px solid #d32f2f;
-      background-color: white;
+      border: 2px solid #00ff00;
+      background-color: #111;
       border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 8px rgba(0, 255, 0, 0.2);
       text-align: left;
     }
+
     .barcode-container {
       display: inline-block;
       margin: 10px;
     }
+
+    #barcode-area {
+      margin-bottom: 10px;
+    }
+
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+</head>
+<body>
+
+  <div class="container">
+    <div class="calculator">
+      <h2>Trolley Calculator</h2>
+      <label for="twoPintInput">Enter 2-Pint Bottles:</label>
+      <input type="number" id="twoPintInput"><br>
+      <label for="fourPintInput">Enter 4-Pint Bottles:</label>
+      <input type="number" id="fourPintInput"><br>
+      <label for="sixPintInput">Enter 6-Pint Bottles:</label>
+      <input type="number" id="sixPintInput"><br>
+      <button onclick="calculateTrolleys()">Calculate</button>
+      <div id="result"></div>
+    </div>
+
+    <div class="calculator">
+      <h2>Cream Calculator (Coming Soon!)</h2>
+      <p>This section will help you calculate cream quantities. Stay tuned!</p>
+    </div>
+  </div>
+
+  <div class="barcode-section">
+    <h2>Cheat Trailer</h2>
+    <div id="barcode-area"></div>
+    <button onclick="showNextBarcode()">Next Barcode</button>
+  </div>
+
   <script>
     function generateRandomNumbers(length) {
       let result = '';
@@ -165,31 +268,6 @@
         "<strong>6-Pint Eaches:</strong> " + sixPintEaches;
     }
   </script>
-</head>
-<body>
-  <div class="container">
-    <div class="calculator">
-      <h2>Trolley Calculator</h2>
-      <label for="twoPintInput">Enter 2-Pint Bottles:</label>
-      <input type="number" id="twoPintInput"><br>
-      <label for="fourPintInput">Enter 4-Pint Bottles:</label>
-      <input type="number" id="fourPintInput"><br>
-      <label for="sixPintInput">Enter 6-Pint Bottles:</label>
-      <input type="number" id="sixPintInput"><br>
-      <button onclick="calculateTrolleys()">Calculate</button>
-      <div id="result"></div>
-    </div>
 
-    <div class="calculator">
-      <h2>Cream Calculator (Coming Soon!)</h2>
-      <p>This section will help you calculate cream quantities. Stay tuned!</p>
-    </div>
-  </div>
-
-  <div class="barcode-section">
-    <h2>Cheat Trailer</h2>
-    <div id="barcode-area"></div>
-    <button onclick="showNextBarcode()">Next Barcode</button>
-  </div>
 </body>
 </html>
